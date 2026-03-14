@@ -26,7 +26,7 @@ namespace Books.API.Controllers
             return Ok(authors);
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetAuthor(Guid id)
         {
             var author = await _authorRepository.GetAuthorByIdAsync(id);
