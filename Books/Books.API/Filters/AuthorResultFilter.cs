@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Books.API.Filters
 {
-    public class BookResultFilter : IAsyncResultFilter
+    public class AuthorResultFilter : IAsyncResultFilter
     {
         private readonly IMapper _mapper;
-        public BookResultFilter(IMapper mapper)
+        public AuthorResultFilter(IMapper mapper)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
@@ -21,9 +21,10 @@ namespace Books.API.Filters
                 return;
             }
 
-            result.Value = _mapper.Map<IEnumerable<Model.BookDto>>(result.Value);
+            result.Value = _mapper.Map<Model.AuthorDto>(result.Value);
 
-            await next(); 
+            await next();
         }
     }
 }
+

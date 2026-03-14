@@ -1,4 +1,5 @@
-﻿using Books.API.Model;
+﻿using Books.API.Filters;
+using Books.API.Model;
 using Books.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,6 +16,7 @@ namespace Books.API.Controllers
         }
 
         [HttpGet]
+        [TypeFilter(typeof(AuthorsResultFilter))]
         public async Task<IActionResult> GetAuthors()
         {
 
@@ -27,6 +29,7 @@ namespace Books.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [TypeFilter(typeof(AuthorResultFilter))]
         public async Task<IActionResult> GetAuthor(Guid id)
         {
             var author = await _authorRepository.GetAuthorByIdAsync(id);
