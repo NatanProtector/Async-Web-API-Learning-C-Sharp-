@@ -7,7 +7,7 @@ namespace Books.API.Services
     {
         Author GetAuthorById(Guid id);
         IEnumerable<Author> GetAuthors();
-        Task<Author> GetAuthorByIdAsync(Guid id);
+        Task<Author?> GetAuthorByIdAsync(Guid id);
         Task<IEnumerable<Author>> GetAuthorsAsync();
     }
 }

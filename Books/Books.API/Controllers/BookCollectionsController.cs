@@ -30,9 +30,14 @@ namespace Books.API.Controllers
 
             var bookEntities = _mapper.Map<IEnumerable<Entities.Book>>(books);
 
-            books.ToList().ForEach(book => bookEntities.ToList().Add(_mapper.Map<Entities.Book>(book)));
+            foreach (var bookEntity in bookEntities)
+            {
+                _booksRepository.AddBook(bookEntity);
+            }
 
-            return Ok(bookEntities); // Return the retrieved book entities for demonstration purposes.
+            await _booksRepository.SaveChangesAsync();
+
+            return Ok(); // Return the retrieved book entities for demonstration purposes.
         }
     }
 }

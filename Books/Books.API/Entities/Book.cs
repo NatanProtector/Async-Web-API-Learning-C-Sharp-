@@ -19,7 +19,7 @@ namespace Books.API.Entities
         [Required]
         public Guid AuthorId { get; set; }
 
-        public Author Author { get; set; } = null;
+        public Author? Author { get; set; }
 
 
         public Book(Guid id, string title, string description, Guid authorId)
