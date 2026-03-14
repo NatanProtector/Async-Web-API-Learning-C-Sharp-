@@ -6,7 +6,7 @@ namespace Books.API.Entities
     [Table("Books")]
     public class Book
     {
-        [Key]
+        [Key] // Entity Framework Core will create generate key if not specified
         public Guid Id { get; set; }
 
         [Required]
@@ -21,17 +21,21 @@ namespace Books.API.Entities
 
         public Author Author { get; set; } = null;
 
-        public Book()
-        {
-        }
 
-        public Book(Guid id, string title, string description, Guid authorId, Author author)
+        public Book(Guid id, string title, string description, Guid authorId)
         {
             Id = id;
             Title = title;
             Description = description;
             AuthorId = authorId;
-            Author = author;
         }
+
+        public Book(string title, string description, Guid authorId)
+        {
+            Title = title;
+            Description = description;
+            AuthorId = authorId;
+        }
+
     }
 }

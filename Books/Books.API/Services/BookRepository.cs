@@ -14,6 +14,11 @@ namespace Books.API.Services
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
+        public void AddBook(Book bookForCreation)
+        {
+            _context.Books.Add(bookForCreation);
+        }
+
         public Book GetBookById(Guid id)
         {
             throw new NotImplementedException();
@@ -35,6 +40,11 @@ namespace Books.API.Services
             return await _context.Books
                 .Include(b => b.Author) // Include the related Author entity
                 .ToListAsync();
+        }
+
+        public async Task<bool> SaveChangesAsync()
+        {
+            return (await _context.SaveChangesAsync() > 0);
         }
     }
 }

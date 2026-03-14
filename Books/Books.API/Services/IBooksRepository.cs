@@ -1,4 +1,5 @@
 ﻿using Books.API.Entities;
+using Books.API.Model;
 
 namespace Books.API.Services
 {
@@ -8,5 +9,7 @@ namespace Books.API.Services
         IEnumerable<Book> GetBooks();
         Task<Book> GetBookByIdAsync(Guid id);
         Task<IEnumerable<Book>> GetBooksAsync();
+        void AddBook(Book bookForCreation);
+        Task<bool> SaveChangesAsync();
     }
 }

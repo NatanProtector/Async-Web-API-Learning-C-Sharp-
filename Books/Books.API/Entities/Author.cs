@@ -17,8 +17,11 @@ namespace Books.API.Entities
         [MaxLength(150)]
         public string LastName { get; set; }
 
-        public Author()
+        public Author(Guid id, string firstName, string lastName)
         {
+            Id = id;
+            FirstName = firstName;
+            LastName = lastName;
         }
     }
 }
