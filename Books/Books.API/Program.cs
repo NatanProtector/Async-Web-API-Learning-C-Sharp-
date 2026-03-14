@@ -1,4 +1,5 @@
 using Books.API.DBContexts;
+using Books.API.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<BooksContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("BooksDBConnectionString"))
 );
+
+builder.Services.AddScoped<IBooksRepository, BooksRepository>();
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddControllers();
 
