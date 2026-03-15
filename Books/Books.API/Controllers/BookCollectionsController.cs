@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Books.API.Filters;
+using Books.API.Helpers;
 using Books.API.Model;
 using Books.API.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +9,7 @@ namespace Books.API.Controllers
 {
     [ApiController]
     [Route("api/bookcollections")]
+    [TypeFilter(typeof(BooksResultFilter))]
     public class BookCollectionsController : ControllerBase
     {
         private readonly IBooksRepository _booksRepository;
@@ -16,8 +19,8 @@ namespace Books.API.Controllers
         {
             _mapper = mapper
                 ?? throw new ArgumentNullException(nameof(mapper));
-            _booksRepository = booksRepository 
-                ??  throw new ArgumentNullException(nameof(booksRepository));
+            _booksRepository = booksRepository
+                ?? throw new ArgumentNullException(nameof(booksRepository));
         }
 
         [HttpPost]
@@ -37,7 +40,24 @@ namespace Books.API.Controllers
 
             await _booksRepository.SaveChangesAsync();
 
-            return Ok(); // Return the retrieved book entities for demonstration purposes.
+            var booksToReturn = await _booksRepository.GetBooksAsync(bookEntities.Select(b => b.Id).ToList());
+
+            var bookIds = string.Join(",", booksToReturn.Select(b => b.Id));
+
+            return CreatedAtRoute("GetBookCollection", new { bookIds }, booksToReturn);
+        }
+
+        [HttpGet("({bookIds})", Name = "GetBookCollection")]
+        public async Task<IActionResult> GetBookCollection(
+            [ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<Guid> bookIds)
+        {
+            var bookEnitities = await _booksRepository.GetBooksAsync(bookIds);
+            if (bookEnitities.Count() != bookIds.Count())
+            {
+                return NotFound();
+            }
+
+            return Ok(bookEnitities);
         }
     }
 }
