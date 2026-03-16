@@ -86,7 +86,7 @@ namespace Books.API.Services
                 });
         }
         public async Task<IEnumerable<BookCoverDto>> GetBookCoversProcessOneByOneAsync(
-            IEnumerable<Guid> bookIds)
+            IEnumerable<Guid> bookIds, CancellationToken cancelationToken)
         {
             var httpClient = _httpClientFactory.CreateClient();
             httpClient.Timeout = TimeSpan.FromSeconds(30);
@@ -110,17 +110,16 @@ namespace Books.API.Services
                             Console.WriteLine("Simulating a long request for testing cancellation...");
                             address += "?returnFault=true";
                         }
-                        else
-                            index_for_testing_cancel++;
+                        index_for_testing_cancel++;
                     }
 
                     var response = await httpClient.GetAsync(address,
-                        cancelationTokenSource.Token);
+                        cancelationToken);
 
                     if (response.IsSuccessStatusCode)
                     {
                         var coverResponse = JsonSerializer.Deserialize<BookCoverDto>(
-                        await response.Content.ReadAsStringAsync(cancelationTokenSource.Token),
+                        await response.Content.ReadAsStringAsync(cancelationToken),
                         new JsonSerializerOptions
                         {
                             PropertyNameCaseInsensitive = true

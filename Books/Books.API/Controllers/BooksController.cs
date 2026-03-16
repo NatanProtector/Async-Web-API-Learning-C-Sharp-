@@ -48,7 +48,8 @@ namespace Books.API.Controllers
 
         [HttpGet("books/{id}", Name = "GetBook")]
         [TypeFilter(typeof(BookWithCoversResultFilter))]
-        public async Task<IActionResult> GetBook(Guid id)
+        public async Task<IActionResult> GetBook(Guid id,
+            CancellationToken cancelationToken)
         {
             var book = await _booksRepository.GetBookByIdAsync(id);
             if (book == null)
@@ -67,7 +68,8 @@ namespace Books.API.Controllers
                     Guid.Parse("a290f1ee-6c54-4b01-90e6-d701748f0853"),
                     Guid.Parse("e290f1ee-6c54-4b01-90e6-d701748f0851"),
                     Guid.Parse("f290f1ee-6c54-4b01-90e6-d701748f0852")
-                }
+                },
+                cancelationToken
             );
 
             return Ok((book, bookCovers));

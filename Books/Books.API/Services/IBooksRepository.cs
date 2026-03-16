@@ -12,7 +12,7 @@ namespace Books.API.Services
         Task<IEnumerable<Book>> GetBooksAsync();
         IAsyncEnumerable<Book> GetBooksAsyncEnumerable();
         Task<BookCoverDto> GetBookCoverAsync(Guid id);
-        Task<IEnumerable<BookCoverDto>> GetBookCoversProcessOneByOneAsync(IEnumerable<Guid> bookIds);
+        Task<IEnumerable<BookCoverDto>> GetBookCoversProcessOneByOneAsync(IEnumerable<Guid> bookIds, CancellationToken cancelationToken);
         Task<IEnumerable<BookCoverDto>> GetBookCoversProcessAfterWaitForAllAsync(IEnumerable<Guid> bookIds); 
         void AddBook(Book bookForCreation);
         Task<bool> SaveChangesAsync();
