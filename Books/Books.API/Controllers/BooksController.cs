@@ -47,11 +47,11 @@ namespace Books.API.Controllers
         }
 
         [HttpGet("books/{id}", Name = "GetBook")]
-        [TypeFilter(typeof(BookResultFilter))]
+        [TypeFilter(typeof(BookWithCoversResultFilter))]
         public async Task<IActionResult> GetBook(Guid id)
         {
-            var books = await _booksRepository.GetBookByIdAsync(id);
-            if (books == null)
+            var book = await _booksRepository.GetBookByIdAsync(id);
+            if (book == null)
             {
                 return NotFound();
             }
@@ -59,7 +59,7 @@ namespace Books.API.Controllers
             //var bookCover = await _booksRepository.GetBookCoverAsync(books.Id);
 
             // Example usage of processing book covers one by one
-            var bookcovers = await _booksRepository.GetBookCoversProcessAfterWaitForAllAsync(
+            var bookCovers = await _booksRepository.GetBookCoversProcessAfterWaitForAllAsync(
                 new List<Guid> 
                 {
                     Guid.Parse("a290f1ee-6c54-4b01-90e6-d701748f0853"),
@@ -68,7 +68,7 @@ namespace Books.API.Controllers
                 }
             );
 
-            return Ok(books);
+            return Ok((book, bookCovers));
         }
 
         [HttpPost("books")]

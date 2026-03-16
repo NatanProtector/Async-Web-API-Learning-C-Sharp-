@@ -3,12 +3,17 @@
     public class BookCoverDto
     {
         public string Id { get; set; }
-        public byte[] Cover { get; set; }
+        //    public byte[] Cover { get; set; }
 
-        public BookCoverDto(string id, byte[] cover)
+        //    public BookCoverDto(string id, byte[] cover)
+        //    {
+        //        Id = id;
+        //        Cover = cover;
+        //    }
+
+        public BookCoverDto(string id)
         {
             Id = id;
-            Cover = cover;
         }
     }
 }
