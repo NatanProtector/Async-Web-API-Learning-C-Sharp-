@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Books.API.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -21,7 +22,14 @@ namespace Books.API.Filters
                 return;
             }
 
-            result.Value = _mapper.Map<IEnumerable<Model.BookDto>>(result.Value);
+            if (result.Value is IEnumerable<Book>)
+            {
+                result.Value = _mapper.Map<IEnumerable<Model.BookDto>>(result.Value);
+            }
+            else if (result.Value is Book)
+            {
+                result.Value = _mapper.Map<Model.BookDto>(result.Value);
+            }
 
             await next(); 
         }

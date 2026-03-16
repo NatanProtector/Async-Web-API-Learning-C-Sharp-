@@ -10,6 +10,8 @@ builder.Services.AddDbContext<BooksContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("BooksDBConnectionString"))
 );
 
+builder.Services.AddHttpClient();
+
 builder.Services.AddScoped<IBooksRepository, BooksRepository>();
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 
