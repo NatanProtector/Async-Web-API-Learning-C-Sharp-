@@ -65,9 +65,12 @@ namespace Books.API.Controllers
             var bookCovers = await _booksRepository.GetBookCoversProcessOneByOneAsync(   
                 new List<Guid> 
                 {
-                    Guid.Parse("a290f1ee-6c54-4b01-90e6-d701748f0853"),
                     Guid.Parse("e290f1ee-6c54-4b01-90e6-d701748f0851"),
-                    Guid.Parse("f290f1ee-6c54-4b01-90e6-d701748f0852")
+                    Guid.Parse("f290f1ee-6c54-4b01-90e6-d701748f0852"),
+                    Guid.Parse("a290f1ee-6c54-4b01-90e6-d701748f0853"),
+                    Guid.Parse("f290f1ee-6c54-4b01-90e6-d701748f0854"),
+                    Guid.Parse("f290f1ee-6c54-4b01-90e6-d701748f0855"),
+                    Guid.Parse("f290f1ee-6c54-4b01-90e6-d701748f0856"),
                 },
                 cancelationToken
             );

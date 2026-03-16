@@ -96,42 +96,47 @@ namespace Books.API.Services
             // Adding concelation token to be able to cancel the request if it takes too long
             //using "using" to ensure that the cancelation token source is disposed of properly after use
             using (var cancelationTokenSource =  new CancellationTokenSource())
-            { 
+            {
+                using (var linkedCancelationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(
+                    cancelationTokenSource.Token,
+                    cancelationToken))
+                {
 
-                int index_for_testing_cancel = 1;
+                    int index_for_testing_cancel = 1;
 
-                foreach (Guid bookId in bookIds) {
-                    string address = $"http://localhost:5054/api/bookcovers/{bookId}";
+                    foreach (Guid bookId in bookIds) {
+                        string address = $"http://localhost:5054/api/bookcovers/{bookId}";
 
-                    // For testing purposes, we can cancel the request after a certain number of iterations
-                    if (index_for_testing_cancel != -1) {
-                        if (index_for_testing_cancel == 2) 
-                        {
-                            Console.WriteLine("Simulating a long request for testing cancellation...");
-                            address += "?returnFault=true";
+                        // For testing purposes, we can cancel the request after a certain number of iterations
+                        if (index_for_testing_cancel != -1) {
+                            if (index_for_testing_cancel == 3) 
+                            {
+                                Console.WriteLine("Simulating a long request for testing cancellation...");
+                                address += "?returnFault=true";
+                            }
+                            index_for_testing_cancel++;
                         }
-                        index_for_testing_cancel++;
-                    }
 
-                    var response = await httpClient.GetAsync(address,
-                        cancelationToken);
+                        var response = await httpClient.GetAsync(address,
+                            linkedCancelationTokenSource.Token);
 
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var coverResponse = JsonSerializer.Deserialize<BookCoverDto>(
-                        await response.Content.ReadAsStringAsync(cancelationToken),
-                        new JsonSerializerOptions
+                        if (response.IsSuccessStatusCode)
                         {
-                            PropertyNameCaseInsensitive = true
+                            var coverResponse = JsonSerializer.Deserialize<BookCoverDto>(
+                            await response.Content.ReadAsStringAsync(linkedCancelationTokenSource.Token),
+                            new JsonSerializerOptions
+                            {
+                                PropertyNameCaseInsensitive = true
+                            }
+                            );
+                            if (coverResponse != null)
+                                covers.Add(coverResponse);
                         }
-                        );
-                        if (coverResponse != null)
-                            covers.Add(coverResponse);
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Failed to retrieve book cover for book with id {bookId}. Status code: {response.StatusCode}");
-                        cancelationTokenSource.Cancel();
+                        else
+                        {
+                            Console.WriteLine($"Failed to retrieve book cover for book with id {bookId}. Status code: {response.StatusCode}");
+                            linkedCancelationTokenSource.Cancel();
+                        }
                     }
                 }
             }
