@@ -93,22 +93,50 @@ namespace Books.API.Services
 
             var covers = new List<BookCoverDto>();
 
-            foreach (Guid bookId in bookIds) {
-                var response = await httpClient.GetAsync($"http://localhost:5054/api/bookcovers/{bookId}");
+            // Adding concelation token to be able to cancel the request if it takes too long
+            //using "using" to ensure that the cancelation token source is disposed of properly after use
+            using (var cancelationTokenSource =  new CancellationTokenSource())
+            { 
 
-                if (response.IsSuccessStatusCode)
-                {
-                    var coverResponse = JsonSerializer.Deserialize<BookCoverDto>(
-                    await response.Content.ReadAsStringAsync(),
-                    new JsonSerializerOptions
+                int index_for_testing_cancel = 1;
+
+                foreach (Guid bookId in bookIds) {
+                    string address = $"http://localhost:5054/api/bookcovers/{bookId}";
+
+                    // For testing purposes, we can cancel the request after a certain number of iterations
+                    if (index_for_testing_cancel != -1) {
+                        if (index_for_testing_cancel == 2) 
+                        {
+                            Console.WriteLine("Simulating a long request for testing cancellation...");
+                            address += "?returnFault=true";
+                        }
+                        else
+                            index_for_testing_cancel++;
+                    }
+
+                    var response = await httpClient.GetAsync(address,
+                        cancelationTokenSource.Token);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var coverResponse = JsonSerializer.Deserialize<BookCoverDto>(
+                        await response.Content.ReadAsStringAsync(cancelationTokenSource.Token),
+                        new JsonSerializerOptions
                         {
                             PropertyNameCaseInsensitive = true
                         }
-                    );
-                    if (coverResponse != null)
-                        covers.Add(coverResponse);
+                        );
+                        if (coverResponse != null)
+                            covers.Add(coverResponse);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Failed to retrieve book cover for book with id {bookId}. Status code: {response.StatusCode}");
+                        cancelationTokenSource.Cancel();
+                    }
                 }
             }
+
 
             return covers;
         }
