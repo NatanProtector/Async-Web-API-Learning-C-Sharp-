@@ -113,5 +113,37 @@ namespace Books.API.Services
             return covers;
         }
 
+        public async Task<IEnumerable<BookCoverDto>> GetBookCoversProcessAfterWaitForAllAsync(IEnumerable<Guid> bookIds)
+        {
+            var HttpClient = _httpClientFactory.CreateClient();
+
+            var tasks = new List<Task<HttpResponseMessage>>();
+
+            foreach (Guid bookId in bookIds)
+            {
+                tasks.Add(HttpClient.GetAsync($"http://localhost:5054/api/bookcovers/{bookId}"));
+            }
+
+            var bookTaskResults = await Task.WhenAll(tasks);
+
+            List<BookCoverDto> bookCoverDtos = new List<BookCoverDto>();
+
+            foreach (var bookTaskResult in bookTaskResults) {
+                if (bookTaskResult.IsSuccessStatusCode) {
+                    // Decirialize the response content to BookCoverDto
+                    var bookCoverDto = JsonSerializer.Deserialize<BookCoverDto>(
+                        await bookTaskResult.Content.ReadAsStringAsync(),
+                        new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        }
+                    );
+                    if (bookCoverDto != null)
+                        bookCoverDtos.Add(bookCoverDto);
+                }
+            }
+            return bookCoverDtos;
+        }
+
     }
 }

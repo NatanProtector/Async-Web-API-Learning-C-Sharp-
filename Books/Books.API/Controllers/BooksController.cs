@@ -59,7 +59,7 @@ namespace Books.API.Controllers
             //var bookCover = await _booksRepository.GetBookCoverAsync(books.Id);
 
             // Example usage of processing book covers one by one
-            var bookcovers = await _booksRepository.GetBookCoversProcessOneByOneAsync(
+            var bookcovers = await _booksRepository.GetBookCoversProcessAfterWaitForAllAsync(
                 new List<Guid> 
                 {
                     Guid.Parse("a290f1ee-6c54-4b01-90e6-d701748f0853"),
